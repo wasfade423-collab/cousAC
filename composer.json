@@ -1,0 +1,17 @@
+{
+    "name": "wasfade/site-cous-ac",
+    "autoload": {
+        "psr-4": {
+            "Wasfade\\SiteCousAc\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Wasfade",
+            "email": "wasfadetonoukoin@gmail.com"
+        }
+    ],
+    "require": {
+        "altorouter/altorouter": "^2.0"
+    }
+}
