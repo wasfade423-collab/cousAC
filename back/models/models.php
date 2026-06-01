@@ -1,11 +1,24 @@
 <?php
-    include("config/database.php");
+    include("back/config/database.php");
     class Models{
         private $database;
         public function __construct(){
             $this->database = $database;
         }
 
+        private function nettoyerDonnees($donneesBrutes) {
+        if (!is_array($donneesBrutes)) {
+            // Si c'est une simple chaîne de caractères, on la nettoie
+            return htmlspecialchars(trim($donneesBrutes));
+        }
+        
+        // Si c'est un tableau (comme notre JSON), on nettoie chaque élément un par un
+        $donneesNettoyees = [];
+        foreach ($donneesBrutes as $cle => $valeur) {
+            $donneesNettoyees[$cle] = $this->nettoyerDonnees($valeur);
+        }
+            return $donneesNettoyees;
+        }        
         //get
 
         public function home(){
@@ -416,8 +429,28 @@
         //post
 
         public function addUniversite(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+            $inputs = json_decode($data, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+                return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+                exit; // On arrête l'exécution ici
+            }
+
+            $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+            $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+            
+            foreach ($champsObligatoires as $champ) {
+
+                if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                    return ([
+                        "status" => "error", 
+                        "message" => "Le champ '{$champ}' ne peut pas être vide."
+                    ]);
+                    exit; // On bloque direct, ça n'ira pas en base de données !
+                }
+            }
             $stmt = $this->database->prepare("INSERT INTO universites (nom, descriptions, ville, photos, photo_plan) VALUES (:nom, :descriptions, :ville, :photos, :photo_plan)");
             if($stmt->execute([":nom"=>$data['nom'], ":ville"=>$data['ville']])){
                 return ["message"=>"Université ajoutée avec succès"];
@@ -427,8 +460,30 @@
         }
 
         public function addIntendant(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO intendants (nom, prenom, email, mot_de_passe, photo, numero_telephone, universite_id) VALUES (:nom, :prenom, :email, :mot_de_passe, :photo, :numero_telephone, :universite_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Intendant ajouté avec succès"];
@@ -438,8 +493,30 @@
         }
 
         public function addCharge_cabine($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO chargé_cabines (nom, prenom, email, mot_de_passe, photo, mot_de_passe, numero_telephone, universite_id) VALUES (:nom, :prenom, :email, :mot_de_passe, :photo, :mot_de_passe, :numero_telephone, :universite_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Chargé de cabines ajouté avec succès"];
@@ -449,8 +526,30 @@
         }
 
         public function addSecretaire($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO secretaires (code_personnel, nom, prenom, email, mot_de_passe, photo, numero_telephone, role, mot_de_passe, universite_id) VALUES (:code_personnel, :nom, :prenom, :email, :mot_de_passe, :photo, :numero_telephone, :photo, :role, :mot_de_passe, :universite_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Secrétaire ajouté avec succès"];
@@ -460,8 +559,30 @@
         }
 
         public function addComptable($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO comptables (code_comptable, nom, prenom, email, mot_de_passe, photo, numero_telephone, universite_id) VALUES (:code_comptable, :nom, :prenom, :email, :mot_de_passe, :photo, :numero_telephone, :universite_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Comptable ajouté avec succès"];
@@ -471,8 +592,30 @@
         }
 
         public function addSecurite($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO agent_securite (matricule, nom, prenom, email, mot_de_passe, photo, numero_telephone, chef_securite, universite_id) VALUES (:matricule, :nom, :prenom, :email, :mot_de_passe, :photo, :numero_telephone, :chef_securite, :universite_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Agent de sécurité ajouté avec succès"];
@@ -482,8 +625,30 @@
         }
 
         public function addEtudiant($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO etudiants (nom, prenom, numero_telephone, email, mot_de_passe, filiere, niveau_etude, ecole, photo, universite_id) VALUES (:nom, :prenom, :numero_telephone, :email, :mot_de_passe, :filiere, :niveau_etude, :ecole, :photo, :universite_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Étudiant ajouté avec succès"];
@@ -493,8 +658,30 @@
         }
 
         public function addNourriture($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO nourritures (nom, moment_repas, menu_details, prix_ticket, universite_id) VALUES (:nom, :moment_repas, :menu_details, :prix_ticket, :universite_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Nourriture ajoutée avec succès"];
@@ -504,8 +691,30 @@
         }
 
         public function addPlainte($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO plaintes (sujet, description, date_plainte, etat, etudiant_id, universite_id) VALUES (:sujet, :description, :date_plainte, :etat, :etudiant_id, :universite_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Plainte ajoutée avec succès"];
@@ -515,8 +724,30 @@
         }
 
         public function addBatiment($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO batiments (libelle_batiment, photos, universite_id) VALUES (:libelle_batiment, :photos, :universite_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Bâtiment ajouté avec succès"];
@@ -526,8 +757,30 @@
         }
 
         public function addDortoir($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);            
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }            
             $stmt = $this->database->prepare("INSERT INTO dortoirs (libelle_chambre, fonctionnelle, palier_id, batiment_id) VALUES (:libelle_chambre, :fonctionnelle, :palier_id, :batiment_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Dortoir ajouté avec succès"];
@@ -537,8 +790,30 @@
         }
 
         public function addPalier($idUniversite){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
             $stmt = $this->database->prepare("INSERT INTO paliers (libelle_palier, batiment_id) VALUES (:libelle_palier, :batiment_id)");
             if($stmt->execute($data)){
                 return ["message"=>"Palier ajouté avec succès"];
@@ -550,9 +825,32 @@
         //put
 
 
-        public function updateUniversite(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);            
+        public function updateUniversite($idUniversite){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }     
+            $data[":universite_id"] = $idUniversite;     
             $stmt = $this->database->prepare("UPDATE universites SET nom = :nom, descriptions = :descriptions, ville = :ville, photos = :photos, photo_plan = :photo_plan WHERE universite_id = :universite_id");
             if($stmt->execute($data)){
                 return ["message"=>"Université mise à jour avec succès"];
@@ -561,9 +859,32 @@
             }
         }
 
-        public function updateIntendant(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);            
+        public function updateIntendant($idUniversite, $idIntendant){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }   
+            $data[":intendant_id"] = $idIntendant;       
             $stmt = $this->database->prepare("UPDATE intendants SET nom = :nom, prenom = :prenom, email = :email, mot_de_passe = :mot_de_passe, photo = :photo, numero_telephone = :numero_telephone, universite_id = :universite_id WHERE intendant_id = :intendant_id");
             if($stmt->execute($data)){
                 return ["message"=>"Intendant mis à jour avec succès"];
@@ -572,10 +893,33 @@
             }
         }
 
-        public function updateCharge_cabine(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
-            $stmt = $this->database->prepare("UPDATE chargé_cabines SET nom = :nom, prenom = :prenom, email = :email, mot_de_passe = :mot_de_passe, photo = :photo, numero_telephone = :numero_telephone, universite_id = :universite_id WHERE charge_cabine_id = :charge_cabine_id");
+        public function updateCharge_cabine($idUniversite, $idCharge_cabine){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":cc_id"] = $idCharge_cabine;
+            $stmt = $this->database->prepare("UPDATE chargé_cabines SET nom = :nom, prenom = :prenom, email = :email, mot_de_passe = :mot_de_passe, photo = :photo, numero_telephone = :numero_telephone, universite_id = :universite_id WHERE cc_id = :cc_id");
             if($stmt->execute($data)){
                 return ["message"=>"Chargé de cabines mis à jour avec succès"];
             }else{
@@ -583,9 +927,32 @@
             }
         }
 
-        public function updateSecretaire(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+        public function updateSecretaire($idUniversite, $idSecretaire){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":secretaire_id"] = $idSecretaire;
             $stmt = $this->database->prepare("UPDATE secretaires SET code_personnel = :code_personnel, nom = :nom, prenom = :prenom, email = :email, mot_de_passe = :mot_de_passe, photo = :photo, numero_telephone = :numero_telephone, role = :role WHERE secretaire_id = :secretaire_id");
             if($stmt->execute($data)){
                 return ["message"=>"Secrétaire mis à jour avec succès"];
@@ -594,9 +961,32 @@
             }
         }
 
-        public function updateComptable(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+        public function updateComptable($idUniversite, $idComptable){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":comptable_id"] = $idComptable;
             $stmt = $this->database->prepare("UPDATE comptables SET code_comptable = :code_comptable, nom = :nom, prenom = :prenom, email = :email, mot_de_passe = :mot_de_passe, photo = :photo, numero_telephone = :numero_telephone WHERE comptable_id = :comptable_id");
             if($stmt->execute($data)){
                 return ["message"=>"Comptable mis à jour avec succès"];
@@ -605,9 +995,32 @@
             }
         }
 
-        public function updateSecurite(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+        public function updateSecurite($idUniversite, $idSecurite){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":agent_securite_id"] = $idSecurite;
             $stmt = $this->database->prepare("UPDATE agent_securite SET matricule = :matricule, nom = :nom, prenom = :prenom, email = :email, mot_de_passe = :mot_de_passe, photo = :photo, numero_telephone = :numero_telephone, chef_securite = :chef_securite WHERE agent_securite_id = :agent_securite_id");
             if($stmt->execute($data)){
                 return ["message"=>"Agent de sécurité mis à jour avec succès"];
@@ -616,9 +1029,32 @@
             }
         }
 
-        public function updateEtudiant(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+        public function updateEtudiant($idUniversite, $idEtudiant){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":etudiant_id"] = $idEtudiant;
             $stmt = $this->database->prepare("UPDATE etudiants SET nom = :nom, prenom = :prenom, numero_telephone = :numero_telephone, email = :email, mot_de_passe = :mot_de_passe, filiere = :filiere, niveau_etude = :niveau_etude, ecole = :ecole, photo = :photo WHERE etudiant_id = :etudiant_id");
             if($stmt->execute($data)){
                 return ["message"=>"Étudiant mis à jour avec succès"];
@@ -627,9 +1063,32 @@
             }
         }
 
-        public function updateNourriture(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+        public function updateNourriture($idUniversite, $idNourriture){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":nourriture_id"] = $idNourriture;
             $stmt = $this->database->prepare("UPDATE nourritures SET nom = :nom, moment_repas = :moment_repas, menu_details = :menu_details, prix_ticket = :prix_ticket WHERE nourriture_id = :nourriture_id");
             if($stmt->execute($data)){
                 return ["message"=>"Nourriture mise à jour avec succès"];
@@ -638,9 +1097,32 @@
             }
         }
 
-        public function updatePlainte(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+        public function updatePlainte($idUniversite, $idPlainte){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":plainte_id"] = $idPlainte;
             $stmt = $this->database->prepare("UPDATE plaintes SET sujet = :sujet, description = :description WHERE plainte_id = :plainte_id");
             if($stmt->execute($data)){
                 return ["message"=>"Plainte mise à jour avec succès"];
@@ -649,9 +1131,32 @@
             }
         }
 
-        public function updateBatiment(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+        public function updateBatiment($idUniversite, $idBatiment){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":batiment_id"] = $idBatiment;
             $stmt = $this->database->prepare("UPDATE batiments SET photos = :photos WHERE batiment_id = :batiment_id");
             if($stmt->execute($data)){
                 return ["message"=>"Bâtiment mis à jour avec succès"];
@@ -660,9 +1165,32 @@
             }
         }
 
-        public function updateDortoir(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+        public function updateDortoir($idUniversite, $idDortoir){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":dortoir_id"] = $idDortoir;
             $stmt = $this->database->prepare("UPDATE dortoirs SET libelle_chambre = :libelle_chambre, fonctionnelle = :fonctionnelle WHERE dortoir_id = :dortoir_id");
             if($stmt->execute($data)){
                 return ["message"=>"Dortoir mis à jour avec succès"];
@@ -671,9 +1199,32 @@
             }
         }
 
-        public function updatePalier(){
-            $data = file_get_contents("php://input");
-            $data = json_decode($data, true);
+        public function updatePalier($idUniversite, $idPalier){
+            $data = file_get_contents('php://input');
+        $inputs = json_decode($data, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($inputs)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            return (["status" => "error", "message" => "Aucune donnée valide reçue."]);
+            exit; // On arrête l'exécution ici
+        }
+
+        $inputsNettoyees = $this->nettoyerDonnees($inputs);
+
+        $champsObligatoires = ['nom', 'prenom', 'email', 'libelle_batiment', 'libelle_palier', 'numero_telephone', 'ecole', 'filliere', 'libelle_chambre', 'libelle_batiment'];
+        
+        foreach ($champsObligatoires as $champ) {
+
+            if (array_key_exists($champ, $inputsNettoyees) && $inputsNettoyees[$champ] === "") {
+                return ([
+                    "status" => "error", 
+                    "message" => "Le champ '{$champ}' ne peut pas être vide."
+                ]);
+                exit; // On bloque direct, ça n'ira pas en base de données !
+            }
+        }
+            $data[":palier_id"] = $idPalier;
             $stmt = $this->database->prepare("UPDATE paliers SET libelle_palier = :libelle_palier, etudiant_id = :etudiant_id WHERE palier_id = :palier_id");
             if($stmt->execute($data)){
                 return ["message"=>"Palier mis à jour avec succès"];
@@ -695,7 +1246,7 @@
             }
         }
 
-        public function deleteIntendant($idIntendant){
+        public function deleteIntendant($idUniversite, $idIntendant){
             $stmt = $this->database->prepare("DELETE FROM intendants WHERE intendant_id = :intendant_id");
             if($stmt->execute([":intendant_id"=>$idIntendant])){
                 return ["message"=>"Intendant supprimé avec succès"];
@@ -704,16 +1255,16 @@
             }
         }
 
-        public function deleteCharge_cabine($idCharge_cabine){
-            $stmt = $this->database->prepare("DELETE FROM chargé_cabines WHERE charge_cabine_id = :charge_cabine_id");
-            if($stmt->execute([":charge_cabine_id"=>$idCharge_cabine])){
+        public function deleteCharge_cabine($idUniversite, $idCharge_cabine){
+            $stmt = $this->database->prepare("DELETE FROM chargé_cabines WHERE cc_id = :cc_id");
+            if($stmt->execute([":cc_id"=>$idCharge_cabine])){
                 return ["message"=>"Chargé de cabines supprimé avec succès"];
             }else{
                 return ["message"=>"Erreur lors de la suppression du chargé de cabine"];
             }
         }
 
-        public function deleteSecretaire($idSecretaire){
+        public function deleteSecretaire($idUniversite, $idSecretaire){
             $stmt = $this->database->prepare("DELETE FROM secretaires WHERE secretaire_id = :secretaire_id");
             if($stmt->execute([":secretaire_id"=>$idSecretaire])){
                 return ["message"=>"Secrétaire supprimé avec succès"];
@@ -722,7 +1273,7 @@
             }
         }
 
-        public function deleteComptable($idComptable){
+        public function deleteComptable($idUniversite, $idComptable){
             $stmt = $this->database->prepare("DELETE FROM comptables WHERE comptable_id = :comptable_id");
             if($stmt->execute([":comptable_id"=>$idComptable])){
                 return ["message"=>"Comptable supprimé avec succès"];
@@ -731,7 +1282,7 @@
             }
         }
 
-        public function deleteSecurite($idSecurite){
+        public function deleteSecurite($idUniversite, $idSecurite){
             $stmt = $this->database->prepare("DELETE FROM agent_securite WHERE agent_securite_id = :agent_securite_id");
             if($stmt->execute([":agent_securite_id"=>$idSecurite])){
                 return ["message"=>"Agent de sécurité supprimé avec succès"];
@@ -740,7 +1291,7 @@
             }
         }
 
-        public function deleteEtudiant($idEtudiant){
+        public function deleteEtudiant($idUniversite, $idEtudiant){
             $stmt = $this->database->prepare("DELETE FROM etudiants WHERE etudiant_id = :etudiant_id");
             if($stmt->execute([":etudiant_id"=>$idEtudiant])){
                 return ["message"=>"Étudiant supprimé avec succès"];
@@ -749,7 +1300,7 @@
             }
         }
 
-        public function deleteNourriture($idNourriture){
+        public function deleteNourriture($idUniversite, $idNourriture){
             $stmt = $this->database->prepare("DELETE FROM nourritures WHERE nourriture_id = :nourriture_id");
             if($stmt->execute([":nourriture_id"=>$idNourriture])){
                 return ["message"=>"Nourriture supprimée avec succès"];
@@ -758,12 +1309,14 @@
             }
         }
 
-        public function deletePlainte($idPlainte){
+        public function deletePlainte($idUniversite, $idPlainte){
             $stmt = $this->database->prepare("DELETE FROM plaintes WHERE plainte_id = :plainte_id");
             if($stmt->execute([":plainte_id"=>$idPlainte])){
                 return ["message"=>"Plainte supprimée avec succès"];
             }else{
                 return ["message"=>"Erreur lors de la suppression de la plainte"];
             }
-        }       
+        } 
+        
+                 
     }

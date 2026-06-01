@@ -1,5 +1,5 @@
 <?php
-    include("models/models.php");
+    include("back/models/models.php");
     require ("vendor/autoload.php");
     class Routes{
     private $data;
@@ -64,17 +64,14 @@
 
         
         $this->router->map('DELETE', 'api/universites/[i:id]/etudiants/[i:id]', 'deleteEtudiant');
-        $this->router->map('DELETE', 'api/universites/[i:id]/batiments/[i:id]', 'deleteBatiment');
-        $this->router->map('DELETE', 'api/universites/[i:id]/plaintes/[i:id]', 'deletePlainte');
         $this->router->map('DELETE', 'api/universites/[i:id]/nourritures/[i:id]', 'deleteNourriture');
         $this->router->map('DELETE', 'api/universites/[i:id]', 'deleteUniversite');
-        $this->router->map('DELETE', 'api/universites/[i:id]/batiments/[i:id]/paliers/[i:idPalier]', 'deletePalier');
-        $this->router->map('DELETE', 'api/universites/[i:id]/batiments/[i:id]/dortoirs/[i:idDortoir]', 'deleteDortoir');
         $this->router->map('DELETE', 'api/universites/[i:id]/securites/[i:id]', 'deleteSecurite');
         $this->router->map('DELETE', 'api/universites/[i:id]/intendants/[i:id]', 'deleteIntendant');
         $this->router->map('DELETE', 'api/universites/[i:id]/comptables/[i:id]', 'deleteComptable');                   
-        $this->router->map('DELETE', 'api/universites/[i:id]/cc/[i:id]', 'deleteCc');
+        $this->router->map('DELETE', 'api/universites/[i:id]/cc/[i:id]', 'deleteCharge_cabine');
         $this->router->map('DELETE', 'api/universites/[i:id]/secretaires/[i:id]', 'deleteSecretaire');
+        $this->router->map('DELETE', 'api/universites/[i:idUniversite]/plaintes/[i:idPlainte]', 'deletePlainte');
     }
 
     public function __construct(){
@@ -90,7 +87,10 @@
         if($match){
             $ressources = [$this->data, $match["target"]];//la fonctio viser par la requete
             $params = $match["params"];   //les parametres de la requete
-            call_user_func_array($ressources, $params);
+
+            $resultat = call_user_func_array([$this->data, $ressources], $params);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($resultat);
         }else{
             http_response_code(404);
             $errors['path'] = "Route de la requète incorrecte.";
