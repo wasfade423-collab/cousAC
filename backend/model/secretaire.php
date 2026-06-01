@@ -129,7 +129,7 @@
                     ":universite_id"=>$datas["universite_id"]                
                 ];
                 try{
-                    $stmt = $this->dbConnect->prepare("UPDATE secretaires SET (nom = :nom, prenom = :prenom, code_personnel = :code_personnel, numero_telephone = :numero_telephone, email = :email, mot_de_passe = :mot_de_passe, date_debut = :date_debut, photo = :photo, role = :role, universite_id = :universite_id) WHERE secretaire_id = :id");
+                    $stmt = $this->dbConnect->prepare("UPDATE secretaires SET nom = :nom, prenom = :prenom, code_personnel = :code_personnel, numero_telephone = :numero_telephone, email = :email, mot_de_passe = :mot_de_passe, date_debut = :date_debut, photo = :photo, role = :role, universite_id = :universite_id WHERE secretaire_id = :id");
                     if($stmt->execute($dataInsert)){
                         $response = [
                             "succes"=>"Données modifiées avec succes!"

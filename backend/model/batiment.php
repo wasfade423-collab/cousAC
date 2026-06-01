@@ -124,7 +124,7 @@
                     ":universite_id"=>$datas["universite_id"]                
                 ];
                 try{
-                    $stmt = $this->dbConnect->prepare("UPDATE batiments SET (libele_batiment = :libele_batiment, photos = :photos, universite_id = :universite_id) WHERE batiment_id = :id");
+                    $stmt = $this->dbConnect->prepare("UPDATE batiments SET libele_batiment = :libele_batiment, photos = :photos, universite_id = :universite_id WHERE batiment_id = :id");
                     if($stmt->execute($dataInsert)){
                         $response = [
                             "succes"=>"Données modifiées avec succes!"

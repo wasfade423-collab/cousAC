@@ -154,7 +154,7 @@
                     ":universite_id"=>$datas["universite_id"]                
                 ];
                 try{
-                    $stmt = $this->dbConnect->prepare("UPDATE etudiants SET (nom = :nom, prenom = :prenom, numero_telephone = :numero_telephone, email = :email, mot_de_passe = :mot_de_passe, date_debut = :date_debut, photo = :photo, filiere = :filiere, ecole = :ecole, niveau_etude = :niveau_etude, universite_id = :universite_id) WHERE etudiant_id = :id");
+                    $stmt = $this->dbConnect->prepare("UPDATE etudiants SET nom = :nom, prenom = :prenom, numero_telephone = :numero_telephone, email = :email, mot_de_passe = :mot_de_passe, date_debut = :date_debut, photo = :photo, filiere = :filiere, ecole = :ecole, niveau_etude = :niveau_etude, universite_id = :universite_id WHERE etudiant_id = :id");
                     if($stmt->execute($dataInsert)){
                         $response = [
                             "succes"=>"Données modifiées avec succes!"

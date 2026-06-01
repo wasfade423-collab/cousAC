@@ -1,7 +1,7 @@
 <?php
-    include("back/models/models.php");
+    include("model/model.php");
     require ("vendor/autoload.php");
-    class Routes{
+    class Router{
     private $data;
     private $router;
 
@@ -25,7 +25,7 @@
         $this->router->map('GET', 'api/universites/[i:idUniversite]/etudiants', 'getEtudiantsByUniversite');
         $this->router->map('GET', 'api/etudiants/[i:id]', 'getEtudiant');
         $this->router->map('GET', 'api/batiments', 'getBatiments');
-        $this->router->map('GET', 'api/universites/[i:idUniversite]/baitment', 'getBatimentsByUniversite');
+        $this->router->map('GET', 'api/universites/[i:idUniversite]/batiment', 'getBatimentsByUniversite');
         $this->router->map('GET', 'api/batiments/[i:id]', 'getBatiment');        
         $this->router->map('GET', 'api/dortoirs', 'getDortoirs');
         $this->router->map('GET', 'api/batiments/[i:idBatiment]/dortoirs', 'getDortoirsByBatiment');

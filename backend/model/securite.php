@@ -127,7 +127,7 @@
                     ":universite_id"=>$datas["universite_id"]                
                 ];
                 try{
-                    $stmt = $this->dbConnect->prepare("UPDATE agent_securite SET (nom = :nom, prenom = :prenom, numero_telephone = :numero_telephone, chef_securite = :chef_securite, mot_de_passe = :mot_de_passe, date_debut = :date_debut, photo = :photo, universite_id = :universite_id) WHERE securite_id = :id");
+                    $stmt = $this->dbConnect->prepare("UPDATE agent_securite SET nom = :nom, prenom = :prenom, numero_telephone = :numero_telephone, chef_securite = :chef_securite, mot_de_passe = :mot_de_passe, date_debut = :date_debut, photo = :photo, universite_id = :universite_id WHERE securite_id = :id");
                     if($stmt->execute($dataInsert)){
                         $response = [
                             "succes"=>"Données modifiées avec succes!"

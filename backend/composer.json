@@ -1,0 +1,17 @@
+{
+    "name": "wasfade/backend",
+    "autoload": {
+        "psr-4": {
+            "Wasfade\\Backend\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Wasfade",
+            "email": "wasfadetonoukoin@gmail.com"
+        }
+    ],
+    "require": {
+        "altorouter/altorouter": "^2.0"
+    }
+}

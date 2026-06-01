@@ -144,7 +144,7 @@
                     ":date_plainte"=>$datas["date_plainte"]               
                 ];
                 try{
-                    $stmt = $this->dbConnect->prepare("UPDATE plaintes SET (sujet = :sujet, description = :description, photos = :photos, etudiant_id = :etudiant_id, date_plainte = :date_plainte, universite_id = :universite_id) WHERE plainte_id = :id");
+                    $stmt = $this->dbConnect->prepare("UPDATE plaintes SET sujet = :sujet, description = :description, photos = :photos, etudiant_id = :etudiant_id, date_plainte = :date_plainte, universite_id = :universite_id WHERE plainte_id = :id");
                     if($stmt->execute($dataInsert)){
                         $response = [
                             "succes"=>"Données modifiées avec succes!"

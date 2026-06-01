@@ -5,7 +5,7 @@
         public function home(){
             include_once("model/home.php");
             $objet = new Home();
-            return $$objet->getHome();
+            return $objet->getHome();
         }
 
         public function getUniversites(){
@@ -177,94 +177,94 @@
         public function addPresentations(){
             include("model/home.php");
             $objet = new Home();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addPresentation($datas);
         }
 
         public function addUniversite(){
             include("model/universite.php");
             $objet = new Universite();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addUniversite($datas);            
         }
 
         public function addIntendant(){
             include("model/intendant.php");
             $objet = new Intendant();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addIntendant($datas);            
         }
         public function addSecretaire(){
             include("model/secretaire.php");
             $objet = new Secretaire();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addSecretaire($datas);             
         }
 
         public function addComptable(){
             include("model/comptable.php");
             $objet = new Comptable();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addComptable($datas);             
         }
 
         public function addChargeCabine(){
             include("model/charge_cabines.php");
             $objet = new ChargeCabine();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addChargeCabine($datas);             
         }
 
         public function addSecurite(){
             include("model/securite.php");
             $objet = new Securite();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addSecurite($datas);             
         }
         public function addRestaurant(){
             include("model/restaurant.php");
             $objet = new agent_restauration();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addRestaurant($datas);              
         }
         
         public function addEtudiant(){
             include("model/etudiant.php");
             $objet = new Etudiant();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addEtudiant($datas);              
         }
 
         public function addBatiment(){
             include("model/batiment.php");
             $objet = new Batiment();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addBatiment($datas);              
         }
 
-        public function addDortoirs(){
+        public function addDortoir(){
             include("model/dortoir.php");
             $objet = new Dortoir();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addDortoir($datas);              
         }
         public function addPlainte(){
             include("model/plainte.php");
             $objet = new Plainte();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addPlainte($datas);              
         } 
         
         public function addNourriture(){
             include("model/nourriture.php");
             $objet = new Nourriture();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addNourriture($datas);              
         }
         public function addPalier(){
             include("model/palier.php");
             $objet = new Palier();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->addPalier($datas);              
         } 
 
@@ -342,94 +342,94 @@
         public function updatePresentation($id){
             include("model/home.php");
             $objet = new Home();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updatePresentation($id, $datas);
         }
 
         public function updateUniversite($id){
             include("model/universite.php");
             $objet = new Universite();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateUniversite($id, $datas);            
         }
 
         public function updateIntendant($id){
             include("model/intendant.php");
             $objet = new Intendant();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateIntendant($id, $datas);            
         }
         public function updateSecretaire($id){
             include("model/secretaire.php");
             $objet = new Secretaire();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateSecretaire($id, $datas);             
         }
 
         public function updateComptable($id){
             include("model/comptable.php");
             $objet = new Comptable();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateComptable($id, $datas);             
         }
 
         public function updateChargeCabine($id){
             include("model/charge_cabines.php");
             $objet = new ChargeCabine();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateChargeCabine($id, $datas);             
         }
 
         public function updateSecurite($id){
             include("model/securite.php");
             $objet = new Securite();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateSecurite($id, $datas);             
         }
         public function updateRestaurant($id){
             include("model/restaurant.php");
             $objet = new agent_restauration();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateRestaurant($id, $datas);              
         }
         
         public function updateEtudiant($id){
             include("model/etudiant.php");
             $objet = new Etudiant();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateEtudiant($id, $datas);              
         }
 
         public function updateBatiment($id){
             include("model/batiment.php");
             $objet = new Batiment();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateBatiment($id, $datas);              
         }
 
         public function updateDortoir($id){
             include("model/dortoir.php");
             $objet = new Dortoir();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateDortoir($id, $datas);              
         }
         public function updatePlainte($id){
             include("model/plainte.php");
             $objet = new Plainte();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updatePlainte($id, $datas);              
         } 
         
         public function updateNourriture($id){
             include("model/nourriture.php");
             $objet = new Nourriture();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updateNourriture($id, $datas);              
         }
         public function updatePalier($id){
             include("model/palier.php");
             $objet = new Palier();
-            $datas = file_get_contents("php://input");
+            $datas = json_decode(file_get_contents("php://input"), true);
             return $objet->updatePalier($id, $datas);              
         }         
     }

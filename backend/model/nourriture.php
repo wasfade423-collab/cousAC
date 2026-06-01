@@ -145,7 +145,7 @@
                     ":prix_ticket"=>$datas["prix_ticket"]              
                 ];
                 try{
-                    $stmt = $this->dbConnect->prepare("UPDATE nourritures SET (nom = :nom, menu_details = :menu_details, prix_ticket = :prix_ticket, universite_id = :universite_id) WHERE nourriture_id = :id");
+                    $stmt = $this->dbConnect->prepare("UPDATE nourritures SET nom = :nom, menu_details = :menu_details, prix_ticket = :prix_ticket, universite_id = :universite_id WHERE nourriture_id = :id");
                     if($stmt->execute($dataInsert)){
                         $response = [
                             "succes"=>"Données modifiées avec succes!"

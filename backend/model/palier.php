@@ -53,7 +53,7 @@
                     ":batiment_id"=>$datas["batiment_id"]             
                 ];
                 try{
-                    $stmt = $this->dbConnect->prepare("UPDATE paliers SET (libele_palier = :libele_palier, etudiant_id = :etudiant_id, batiment_id = :batiment_id) WHERE palier_id = :id");
+                    $stmt = $this->dbConnect->prepare("UPDATE paliers SET libele_palier = :libele_palier, etudiant_id = :etudiant_id, batiment_id = :batiment_id WHERE palier_id = :id");
                     if($stmt->execute($dataInsert)){
                         $response = [
                             "succes"=>"Données modifiées avec succes!"

@@ -91,7 +91,7 @@
                     ":images"=>$datas["images"]
                 ];
                 try{
-                    $stmt = $this->dbConnect->prepare("UPDATE presentations SET (description = :description, universite_id = :universite_id, reglements = :reglements, images = :images) WHERE id =:id");
+                    $stmt = $this->dbConnect->prepare("UPDATE presentations SET description = :description, universite_id = :universite_id, reglements = :reglements, images = :images WHERE id =:id");
                     if($stmt->execute($dataInsert)){
                         $response = [
                             "succes"=>"Données modifiées avec succes!"
